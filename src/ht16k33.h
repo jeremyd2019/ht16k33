@@ -122,9 +122,47 @@ public:
         supper::readKeys(m_keyBuffer);
     }
 
-    inline bool isKeySet(uint8_t col, uint8_t row)
+    inline bool isKeySet(uint8_t col, uint8_t row) const
     {
         return !!(m_keyBuffer[col] & (1 << row));
+    }
+
+    struct KeyPosition
+    {
+        uint8_t col:4;
+        uint8_t row:4;
+    };
+
+    inline KeyPosition firstKeySet() const
+    {
+        for (uint8_t col = 0; col < 3; ++col)
+            if (m_keyBuffer[col])
+                return {col, static_cast<uint8_t>(__builtin_ctz(m_keyBuffer[col]))};
+        return {0xF, 0xF};
+    }
+
+    struct KeyPosition2
+    {
+        KeyPosition key[2];
+    };
+
+    inline KeyPosition2 twoKeysSet() const
+    {
+        KeyPosition2 retval = {{{0xF, 0xF}, {0xF, 0xF}}};
+        uint8_t i = 0;
+        for (uint8_t col = 0; col < 3 && i < 2; ++col)
+        {
+            if (m_keyBuffer[col])
+            {
+                uint16_t tmp = m_keyBuffer[col];
+                retval.key[i] = {col, static_cast<uint8_t>(__builtin_ctz(tmp))};
+                tmp &= ~(1 << retval.key[i++].row);
+                if (i < 2 && tmp)
+                    retval.key[i++] = {col, static_cast<uint8_t>(__builtin_ctz(tmp))};
+            }
+        }
+
+        return retval;
     }
 
 private:
