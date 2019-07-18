@@ -131,6 +131,14 @@ public:
     {
         uint8_t col:4;
         uint8_t row:4;
+        inline bool operator==(const KeyPosition & rhs) const
+        {
+            return (memcmp(this, &rhs, sizeof(rhs)) == 0);
+        }
+        inline bool operator!=(const KeyPosition & rhs) const
+        {
+            return !(*this == rhs);
+        }
     };
 
     inline KeyPosition firstKeySet() const
@@ -144,6 +152,14 @@ public:
     struct KeyPosition2
     {
         KeyPosition key[2];
+        inline bool operator==(const KeyPosition2 & rhs) const
+        {
+            return (memcmp(this, &rhs, sizeof(rhs)) == 0);
+        }
+        inline bool operator!=(const KeyPosition2 & rhs) const
+        {
+            return !(*this == rhs);
+        }
     };
 
     inline KeyPosition2 twoKeysSet() const
