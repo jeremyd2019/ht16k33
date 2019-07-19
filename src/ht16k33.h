@@ -131,6 +131,7 @@ public:
     {
         uint8_t col:4;
         uint8_t row:4;
+        inline KeyPosition(const KeyPosition & rhs) = default;
         inline bool operator==(const KeyPosition & rhs) const
         {
             return (memcmp(this, &rhs, sizeof(rhs)) == 0);
